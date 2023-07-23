@@ -1,0 +1,11 @@
+{
+    "orders": [
+        "add",
+        "update",
+        "delete",
+        "query",
+        "detail",
+        "enable",
+        "disable"
+    ]
+}

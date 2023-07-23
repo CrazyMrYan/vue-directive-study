@@ -1,17 +1,32 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <button v-permission="'orders::update1'">Update11</button>
+    <button v-permission="'orders::update'">Update</button>
+    <button v-permission="'orders::update'">Update</button>
+    <button v-permission="'orders::update'">Update</button>
+    <button v-permission="'orders::update'">Update</button>
+    <button v-permission="'orders::update'">Update</button>
+    <button v-permission="'orders::update'">Update</button>
+    <button v-permission="'orders::update'">Update</button>
+    <button v-permission="permission">Add11</button>
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
-
 export default {
-  name: "App",
-  components: {
-    HelloWorld,
+  data() {
+    return {
+      permission: "orders::add",
+    };
+  },
+
+  mounted() {
+    setTimeout(() => {
+      this.permission = "orders::data";
+    }, 2000);
+    setTimeout(() => {
+      this.permission = "orders::add";
+    }, 4000);
   },
 };
 </script>
