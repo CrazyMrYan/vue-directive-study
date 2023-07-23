@@ -2,10 +2,10 @@ import Vue from "vue";
 import App from "./App.vue";
 
 Vue.config.productionTip = false;
-
+// 模拟请求
 const getPermissionsApi = () =>
   new Promise((resolve) => {
-    console.log(111);
+    console.log("request");
     setTimeout(() => {
       resolve({
         orders: [
@@ -21,6 +21,7 @@ const getPermissionsApi = () =>
     }, 2000);
   });
 
+// 分割字符串
 const splitPermissionString = (str) => {
   try {
     if (typeof str === "string" && str.includes("::")) {
@@ -41,7 +42,6 @@ const controller = {
   isRequest: false,
   // 权限集合
   permissionList: [],
-  tasks: [],
 };
 
 const checkPermission = async (value = null) => {
