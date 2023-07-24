@@ -3,23 +3,8 @@ import App from "./App.vue";
 
 Vue.config.productionTip = false;
 // 模拟请求
-const getPermissionsApi = () =>
-  new Promise((resolve) => {
-    console.log("request");
-    setTimeout(() => {
-      resolve({
-        orders: [
-          "add",
-          "update",
-          "delete",
-          "query",
-          "detail",
-          "enable",
-          "disable",
-        ],
-      });
-    }, 2000);
-  });
+const getPermissionsApi = async () =>
+  fetch(`/api.json?t=${new Date().getTime()}`).then((res) => res.json());
 
 // 分割字符串
 const splitPermissionString = (str) => {
@@ -38,33 +23,43 @@ const splitPermissionString = (str) => {
 
 // 使用示例
 const controller = {
-  // 是否请求完成
-  isRequest: false,
+  // 是否发去过请求
+  hasRequested: false,
   // 权限集合
   permissionList: [],
+  // 真正的请求任务
+  task: null,
 };
 
 const checkPermission = async (value = null) => {
   // 判断是否发送过请求
-  if (!controller.isRequest) {
-    controller.permissionList = await getPermissionsApi();
-    controller.isRequest = true;
+  if (!controller.hasRequested) {
+    controller.hasRequested = true;
+    controller.task = getPermissionsApi();
   }
+
+  // 进行赋值
+  controller.permissionList = await controller.task;
 
   // 截取对应的模块和操作
   const [module = null, operate = null] = splitPermissionString(value) ?? [];
 
+  // 是否存在权限
+  const hasModule = module && controller.permissionList[module];
+
   // 判断模块和操作是否存在
-  if (!module || !operate) return false;
+  if (!module || !operate || !hasModule) return false;
 
   // 判断是否有权限
-  return controller.permissionList[module]?.includes(operate) ?? false;
+  return hasModule?.includes(operate) ?? false;
 };
 
 // 全局自定义指令
 Vue.directive("permission", {
   async inserted(el, binding) {
+    el.style.display = "none";
     const hasPermission = await checkPermission(binding.value);
+    el.style.display = "";
     if (!hasPermission) {
       el.parentNode?.removeChild(el); // 移除元素
     }
